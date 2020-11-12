@@ -1,0 +1,147 @@
+/registers:
+/F000-F009 program counter
+/F010-F013 store virtual instruction
+/F020-F02F dump or temporary buffer
+/F030-F032 instruction copy flags
+/0000-AFFF virtual machine path index
+/path index flags are at XXX0
+/B000-BFFF virtual machine program
+/
+/reset program counter, F000 is least significant digit
+0000 ADR0 FFFF 0001
+0001 ADR1 F000 0002
+0002 BUF0 0000 0003
+0003 ADR0 FFFF 0004
+0004 ADR1 F001 0005
+0005 BUF0 0000 0006
+0006 ADR0 FFFF 0007
+0007 ADR1 F002 0008
+0008 BUF0 0000 0009
+0009 ADR0 FFFF 000A
+000A ADR1 F003 000B
+000B BUF0 0000 000C
+000C ADR0 FFFF 000D
+000D ADR1 F004 000E
+000E BUF0 0000 000F
+000F ADR0 FFFF 0010
+0010 ADR1 F005 0011
+0011 BUF0 0000 0012
+0012 ADR0 FFFF 0013
+0013 ADR1 F006 0014
+0014 BUF0 0000 0015
+0015 ADR0 FFFF 0016
+0016 ADR1 F007 0017
+0017 BUF0 0000 0018
+0018 ADR0 FFFF 0019
+0019 ADR1 F008 001A
+001A BUF0 0000 001B
+001B ADR0 FFFF 001C
+001C ADR1 F009 001D
+001D BUF0 0000 0040
+/
+/grab the instruction
+/reset instruction copy flags
+0040 ADR0 FFFF 0041
+0041 ADR1 F030 0042
+0042 BUF0 0000 0043
+0043 ADR0 FFFF 0044
+0044 ADR1 F031 0045
+0045 BUF0 0000 0046
+0046 ADR0 FFFF 0047
+0047 ADR1 F032 0048
+0048 BUF0 0000 0080
+/
+/path indexing to instruction
+0080 ADR0 FFFF 0081
+0081 ADR1 F000 0082
+0082 JMPR 0000 0084
+0084 WRITE 0
+0085 WRITE 1
+/
+0088 ADR0 FFFF 0089
+0089 ADR1 F001 008A
+008A JMPR 0000 008C
+008C WRITE 0
+008D WRITE 1
+/
+0090 ADR0 FFFF 0091
+0091 ADR1 F002 0092
+0092 JMPR 0000 0094
+0094 WRITE 0
+0095 WRITE 1
+/
+0098 ADR0 FFFF 0099
+0099 ADR1 F003 009A
+009A JMPR 0000 009C
+009C WRITE 0
+009D WRITE 1
+/
+00A0 ADR0 FFFF 00A1
+00A1 ADR1 F004 00A2
+00A2 JMPR 0000 00A4
+00A4 WRITE 0
+00A5 WRITE 1
+/
+00A8 ADR0 FFFF 00A9
+00A9 ADR1 F003 00AA
+00AA JMPR 0000 00AC
+00AC WRITE 0
+00AD WRITE 1
+/
+/first section increments the program and loads
+/the current instruction into F000
+
+With Macros:
+
+/registers:
+/F000-F009 program counter
+/F010-F013 store virtual instruction
+/F020-F02F dump or temporary buffer
+/F030-F032 instruction copy flags
+/0000-AFFF virtual machine path index
+/path index values are at xxx0
+/path index flags are at xxx1
+/B000-BFFF virtual machine program
+
+.reset16 f000
+.reset16 f010
+.reset16 f030
+
+.reset 0001
+.jump ffff f000 pathzero pathone
+@test1
+.jump ffff f001 pathzero pathone
+@test2
+.jump ffff f002 pathzero pathone
+@test3
+.jump ffff f003 pathzero pathone
+@test4
+.jump ffff f004 pathzero pathone
+@test5
+.jump ffff f005 pathzero pathone
+@test6
+.jump ffff f006 pathzero pathone
+@test7
+.jump ffff f007 pathzero pathone
+@test8
+.jump ffff f008 pathzero pathone
+@test9
+.jump ffff f009 pathzero pathone
+
+@pathzero
+.adr ffff 0001
+.jump 0001 0001 end0 continue0
+@end0
+.write0 0001 0000
+.write1 0001 0001
+.write0 1003 1001
+.goto test1
+@continue0
+.jump 0001 0000 putpathzero0 putpathone0
+@putpathzero0
+.write0 0004 0000
+.goto pathzero1
+@putpathone0
+.write1 0004 0000
+.goto pathzero1
+@pathzero1
